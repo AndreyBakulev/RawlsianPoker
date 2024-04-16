@@ -1,3 +1,5 @@
+use std::fmt;
+
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub enum Suit {
     Hearts,
@@ -25,5 +27,11 @@ impl Card {
             13 => "King".to_string(),
             _ => self.value.to_string(),
         }
+    }
+}
+
+impl fmt::Display for Card {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{} of {:?}", self.name(), self.suit)
     }
 }

@@ -1,6 +1,8 @@
+use std::fmt;
 use rand::seq::SliceRandom;
 use rand::thread_rng;
 use crate::card::{Card, Suit};
+
 pub(crate) struct Deck {
     pub(crate) card_array: Vec<Card>,
 }
@@ -23,5 +25,12 @@ impl Deck {
 
     pub fn draw(&mut self) -> Option<Card> {
         self.card_array.pop()
+    }
+}
+
+impl fmt::Display for Deck {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let card_strings: Vec<String> = self.card_array.iter().map(|card| card.to_string()).collect();
+        write!(f, "{}", card_strings.join("\n"))
     }
 }

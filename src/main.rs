@@ -2,16 +2,13 @@ mod card;
 mod deck;
 use deck::Deck;
 fn main() {
-    println!("Hello, world!");
     let mut deck = Deck::new();
-    println!("New Deck: {:?}", deck.card_array);
-
     deck.shuffle();
-    println!("Shuffled Deck: {:?}", deck.card_array);
+    println!("Shuffled Deck:\n {}", deck);
 
     let card = deck.draw();
     match card {
-        Some(c) => println!("Drawn Card: {:?}", c),
+        Some(c) => println!("Drawn Card: {}", c),
         None => println!("No more cards in the deck!"),
     }
 }
