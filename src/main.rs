@@ -1,16 +1,17 @@
 mod card;
 mod deck;
-use deck::Deck;
-fn main() {
-    let mut deck = Deck::new();
-    deck.shuffle();
-    println!("Shuffled Deck:\n {}", deck);
+mod player;
+use crate::deck::DECK;
+use crate::player::Player;
 
-    let card = deck.draw();
-    match card {
-        Some(c) => println!("Drawn Card: {}", c),
-        None => println!("No more cards in the deck!"),
-    }
+fn main() {
+    let mut p1 = Player::new();
+    deck::Deck::shuffle();
+    println!("Shuffled Deck:\n{}", *DECK.lock().unwrap());
+    p1.draw();
+    println!("Player 1's Hand:{:?}",p1.hand);
+    p1.draw();
+    println!("Player 1's Hand:{:?}",p1.hand);
 }
 /*
 TODO:
@@ -27,7 +28,9 @@ each player draws a card and sees if they have a combination (if statements?)
 
 }
 STEPS {
-1. Add card class and an array of cards named Deck
-give each card a name, value, and suit
+1. normal poker
+2. adding traits
+3. GUI
+4. multiplayer?
 }
  */

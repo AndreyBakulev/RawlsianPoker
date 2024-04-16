@@ -8,7 +8,7 @@ pub enum Suit {
     Spades,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub(crate) struct Card {
     value: u8,
     suit: Suit,
