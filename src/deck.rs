@@ -6,6 +6,7 @@ use rand::thread_rng;
 use crate::card::{Card, Suit};
 
 lazy_static! {
+    //making a global deck
     pub static ref DECK: Mutex<Deck> = Mutex::new(Deck::new());
 }
 pub struct Deck {

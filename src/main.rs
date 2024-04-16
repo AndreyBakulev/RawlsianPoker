@@ -1,17 +1,16 @@
 mod card;
 mod deck;
 mod player;
-use crate::deck::DECK;
 use crate::player::Player;
 
 fn main() {
     let mut p1 = Player::new();
     deck::Deck::shuffle();
-    println!("Shuffled Deck:\n{}", *DECK.lock().unwrap());
-    p1.draw();
-    println!("Player 1's Hand:{:?}",p1.hand);
-    p1.draw();
-    println!("Player 1's Hand:{:?}",p1.hand);
+    //println!("Shuffled Deck:\n{}", *DECK.lock().unwrap());
+    while p1.hand.len() < 5{
+        p1.draw();
+    }
+    println!("Player 1's Hand:\n{}",p1);
 }
 /*
 TODO:

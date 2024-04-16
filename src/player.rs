@@ -1,5 +1,6 @@
+use std::fmt;
 use crate::card::Card;
-use crate::deck::DECK;
+use crate::deck::{DECK};
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct Player {
     pub(crate) hand: Vec<Card>,
@@ -19,6 +20,12 @@ impl Player {
         } else {
             None
         }
+    }
+}
+impl fmt::Display for Player {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let hand: Vec<String> = self.hand.iter().map(|card| card.to_string()).collect();
+        write!(f, "{}", hand.join("\n"))
     }
 }
 
