@@ -1,15 +1,17 @@
 use std::fmt;
 use crate::card::Card;
-use crate::deck::{DECK};
+use crate::deck::Deck;
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct Player {
     pub(crate) hand: Vec<Card>,
+    id: String
 }
 
 impl Player {
-    pub fn new() -> Self {
+    pub fn new(id: &str) -> Self {
         Player {
             hand: Vec::new(),
+            id: id.to_string()
         }
     }
     pub fn draw(&mut self) -> Option<Card> {
