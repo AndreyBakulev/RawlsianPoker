@@ -1,7 +1,7 @@
 use crate::deck::Deck;
 use crate::player::Player;
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq,PartialOrd, Ord, Hash)]
 pub struct Table {
     table_id: String,
     pub(crate) deck: Deck,

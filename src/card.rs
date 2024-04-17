@@ -1,6 +1,6 @@
 use std::fmt;
 
-#[derive(Debug, PartialEq, Eq, Clone, Copy)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Clone, Copy)]
 pub enum Suit {
     Hearts,
     Diamonds,
@@ -8,10 +8,10 @@ pub enum Suit {
     Spades,
 }
 
-#[derive(Debug, PartialEq, Eq, Clone, Copy)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Clone, Copy)]
 pub(crate) struct Card {
-    value: u8,
-    suit: Suit,
+    pub(crate) value: u8,
+    pub(crate) suit: Suit,
 }
 
 impl Card {
