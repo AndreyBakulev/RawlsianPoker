@@ -8,9 +8,10 @@ use crate::table::Table;
 fn main() {
     let mut table = Table::new("Table 1");
     let mut p1 = Player::new("Andrey");
-    //println!("Shuffled Deck:\n{}", *DECK.lock().unwrap());
+    table.deck.shuffle();
+    println!("Shuffled Deck:\n{}", table.deck);
     while p1.hand.len() < 5{
-        p1.draw();
+        p1.draw(&mut table.deck);
     }
     println!("Player 1's Hand:\n{}",p1);
 }

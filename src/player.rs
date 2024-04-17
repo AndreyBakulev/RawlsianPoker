@@ -1,22 +1,21 @@
 use std::fmt;
 use crate::card::Card;
 use crate::deck::Deck;
-#[derive(Debug, PartialEq, Eq, Clone)]
+
+#[derive(Debug, PartialEq, Eq)]
 pub struct Player {
     pub(crate) hand: Vec<Card>,
-    id: String
+    pub(crate) id: String,
 }
-
 impl Player {
     pub fn new(id: &str) -> Self {
         Player {
             hand: Vec::new(),
-            id: id.to_string()
+            id: id.to_string(),
         }
     }
-    pub fn draw(&mut self) -> Option<Card> {
-        let mut deck = DECK.lock().unwrap();
-        if let Some(card) = deck.card_array.pop() {
+    pub fn draw(&mut self, deck: &mut Deck) -> Option<Card> {
+        if let Some(card) = deck.draw() {
             self.hand.push(card);
             Some(card)
         } else {
@@ -30,4 +29,3 @@ impl fmt::Display for Player {
         write!(f, "{}", hand.join("\n"))
     }
 }
-
