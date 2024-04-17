@@ -2,6 +2,7 @@ use std::collections::HashMap;
 use std::fmt;
 use crate::card::Card;
 use crate::deck::Deck;
+use crate::table::Table;
 
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum PokerHand {
@@ -17,17 +18,21 @@ pub enum PokerHand {
     RoyalFlush,
 }
 
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Debug, PartialEq, PartialOrd, Ord, Hash)]
 pub struct Player {
     pub(crate) hand: Vec<Card>,
     pub(crate) id: String,
+    pub(crate) balance: f64,
+    pub folded: bool,
 }
 
 impl Player {
-    pub fn new(id: &str) -> Self {
+    pub fn new(id: &str, balance: f64) -> Self {
         Player {
             hand: Vec::new(),
             id: id.to_string(),
+            balance,
+            folded: false,
         }
     }
 
@@ -38,6 +43,18 @@ impl Player {
         } else {
             None
         }
+    }
+    pub fn bet(&mut self, mut table: &mut Table, amount: f64){
+        if (self.balance - amount) > 0.0 {
+            table.pot += amount;
+            self.balance -= amount;
+            println!("Successfully bet {}!", amount);
+        } else {
+            println!("Not enough balance to bet!");
+        }
+    }
+    pub fn fold(&mut self){
+        self.folded = true;
     }
 
     pub fn evaluate_hand(&self) -> PokerHand {
