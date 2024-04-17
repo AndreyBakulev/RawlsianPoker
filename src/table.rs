@@ -1,3 +1,4 @@
+use std::fmt;
 use crate::card::Card;
 use crate::deck::Deck;
 use crate::player::Player;
@@ -41,9 +42,8 @@ impl Table {
         self.betting_round();
         //adds 3 to community cards
         for i in 0 .. 3{
-            println!("getting community card");
             self.community_card.push(self.deck.draw().unwrap());
-            println!("community cards: {}",self.community_card[i]);
+
         }
         self.betting_round();
         self.community_card.push(self.deck.draw().unwrap());
@@ -67,8 +67,8 @@ impl Table {
             for i in 0..current_players.len() {
                 let player_index = current_players[i];
                 let player = &mut self.players[player_index];
-                println!("{}'s turn:\nPot: {}\nBalance: {}\nCards: {} ({:?})"
-                         ,player.id,self.pot,player.balance,player,player.evaluate_hand());
+                println!("Community Cards:{:?}\nPot: {}\n{}'s turn:\nBalance: {}\nCards: {} ({:?})"
+                         ,self.community_card,self.pot,player.id,player.balance,player,player.evaluate_hand());
                 println!("Enter your action (bet, call, raise, fold):");
                 let mut action = String::new();
                 std::io::stdin().read_line(&mut action).expect("Failed to read line");
@@ -120,5 +120,11 @@ impl Table {
 
 
         println!("Everyone has made an action this turn!");
+    }
+}
+impl fmt::Display for Table {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let community_cards: Vec<String> = self.community_card.iter().map(|card| card.to_string()).collect();
+        write!(f, "{}", community_cards.join(", "))
     }
 }
