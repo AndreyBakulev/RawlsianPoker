@@ -59,13 +59,16 @@ impl Player {
         self.folded = true;
     }
 
-    pub fn evaluate_hand(&self) -> PokerHand {
-        let mut hand_rank = 0;
+    pub fn evaluate_hand(&self, community_cards: &Vec<Card>) -> PokerHand {
+        let mut hand_rank;
         let mut rank_counts = HashMap::new();
         let mut suit_counts = HashMap::new();
-
+        let mut total_cards: Vec<Card> = self.hand.clone();
+        total_cards.extend(community_cards.clone());
+        println!("{:?}",total_cards);
+        println!("{}", &self);
         // Count the occurrences of each rank and suit
-        for card in &self.hand {
+        for card in total_cards {
             *rank_counts.entry(card.value).or_insert(0) += 1;
             *suit_counts.entry(card.suit).or_insert(0) += 1;
         }

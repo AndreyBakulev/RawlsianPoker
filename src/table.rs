@@ -1,9 +1,9 @@
-use std::fmt;
+use std::{cmp, fmt};
 use crate::card::Card;
 use crate::deck::Deck;
 use crate::player::Player;
 
-#[derive(Debug, PartialEq,PartialOrd, Eq,Ord, Hash)]
+#[derive(Debug, PartialEq, PartialOrd, Eq, Ord, Hash)]
 pub struct Table {
     pub table_id: String,
     pub(crate) deck: Deck,
@@ -11,6 +11,7 @@ pub struct Table {
     pub pot: i64,
     pub community_card: Vec<Card>,
 }
+
 impl Table {
     pub fn new(table_id: &str) -> Self {
         Table {
@@ -28,6 +29,15 @@ impl Table {
         self.players.retain(|player| player.id != player_id);
     }
     pub fn play_round(&mut self) {
+        let
+        //TODO: decide whether broke players can stay at the table & iterate cus fast!
+        let viable_players = self.players.clone().iter().
+        for i in 0.. self.players.len() {
+            if 0 >= self.players[i].balance {
+                println!("{} has no more money left!", self.players[i].id);
+                self.players.remove(i);
+            }
+        }
         self.pot = 0;
         self.community_card.clear();
         for player in &mut self.players {
@@ -40,17 +50,14 @@ impl Table {
             }
         }
         self.betting_round();
-        //adds 3 to community cards
-        for i in 0 .. 3{
+        for _ in 0..3 {
             self.community_card.push(self.deck.draw().unwrap());
-
         }
         self.betting_round();
         self.community_card.push(self.deck.draw().unwrap());
         self.betting_round();
         self.community_card.push(self.deck.draw().unwrap());
         self.betting_round();
-
         // Showdown and determine the winner
         // TODO: Implement showdown and winner determination
 
@@ -60,68 +67,64 @@ impl Table {
 
     fn betting_round(&mut self) {
         let mut last_raise = 0;
+        //makes basically a dict of index and player and filters for non-folded players
         let mut current_players: Vec<usize> = self.players.iter().enumerate()
             .filter(|(_, player)| !player.folded)
             .map(|(index, _)| index)
             .collect();
-            for i in 0..current_players.len() {
-                let player_index = current_players[i];
-                let player = &mut self.players[player_index];
-                println!("Community Cards:{:?}\nPot: {}\n{}'s turn:\nBalance: {}\nCards: {} ({:?})"
-                         ,self.community_card,self.pot,player.id,player.balance,player,player.evaluate_hand());
-                println!("Enter your action (bet, call, raise, fold):");
-                let mut action = String::new();
-                std::io::stdin().read_line(&mut action).expect("Failed to read line");
-                let action = action.trim();
+        for i in 0..current_players.len() {
+            let player_index = current_players[i];
+            let player = &mut self.players[player_index];
+            println!("\nCommunity Cards:{:?}\nPot: {}\n{}'s turn:\nBalance: {}\nCards: {} ({:?})"
+                     , self.community_card, self.pot, player.id, player.balance, player, player.evaluate_hand(&self.community_card));
+            println!("Enter your action (bet, call, raise, fold):");
+            let mut action = String::new();
+            std::io::stdin().read_line(&mut action).expect("Failed to read line");
+            let action = action.trim();
 
-                match action {
-                    "bet" => {
-                        println!("Enter the bet amount:");
-                        let mut amount = String::new();
-                        std::io::stdin().read_line(&mut amount).expect("Failed to read line");
-                        let amount: i64 = amount.trim().parse().expect("Invalid bet amount");
+            match action {
+                "bet" => {
+                    println!("Enter the bet amount:");
+                    let mut amount = String::new();
+                    std::io::stdin().read_line(&mut amount).expect("Failed to read line");
+                    let amount: i64 = amount.trim().parse().expect("Invalid bet amount");
+                    player.bet(&mut self.pot, amount);
+                    last_raise = amount;
+                }
+                "call" => {
+                    let all_in = cmp::min(last_raise, player.balance);
+                    player.bet(&mut self.pot, all_in);
+                }
+                "raise" => {
+                    println!("Enter the raise amount:");
+                    let mut amount = String::new();
+                    std::io::stdin().read_line(&mut amount).expect("Failed to read line");
+                    let amount: i64 = amount.trim().parse().expect("Invalid raise amount");
+                    if amount > last_raise {
                         player.bet(&mut self.pot, amount);
                         last_raise = amount;
-                    }
-                    "call" => {
-                        player.bet(&mut self.pot, last_raise);
-                    }
-                    "raise" => {
-                        println!("Enter the raise amount:");
-                        let mut amount = String::new();
-                        std::io::stdin().read_line(&mut amount).expect("Failed to read line");
-                        let amount: i64 = amount.trim().parse().expect("Invalid raise amount");
-                        if amount > last_raise {
-                            player.bet(&mut self.pot, amount);
-                            last_raise = amount;
-                            current_players = self.players.iter().enumerate()
-                                .filter(|(_, player)| !player.folded)
-                                .map(|(index, _)| index)
-                                .collect();
-                            break;
-                        } else {
-                            println!("Cannot raise to a lower value!");
-                        }
-                    }
-                    "fold" => {
-                        player.fold();
-                        current_players.remove(i);
+                        current_players = self.players.iter().enumerate()
+                            .filter(|(_, player)| !player.folded)
+                            .map(|(index, _)| index)
+                            .collect();
                         break;
-                    }
-                    _ => {
-                        println!("Invalid action. Please enter a valid action.");
+                    } else {
+                        println!("Cannot raise to a lower value!");
                     }
                 }
-
-                // println!("{}'s Hand:\n{}", player.id, player);
-                // let hand_rank = player.evaluate_hand();
-                // println!("Hand Rank:\n{:?}", hand_rank);
+                "fold" => {
+                    player.fold();
+                    current_players.remove(i);
+                    break;
+                }
+                _ => {
+                    println!("Invalid action. Please enter a valid action.");
+                }
             }
-
-
-        println!("Everyone has made an action this turn!");
+        }
     }
 }
+
 impl fmt::Display for Table {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let community_cards: Vec<String> = self.community_card.iter().map(|card| card.to_string()).collect();
