@@ -66,7 +66,7 @@ impl Player {
             };
         } else if rank_counts.values().any(|&count| count == 4) {
             hand_rank = 8; // Four of a Kind
-        } else if rank_counts.values().filter(|&&count| count == 3 || count == 2).count() == 2 {
+        } else if rank_counts.values().any(|&count| count == 2) && rank_counts.values().any(|&count| count == 3){
             hand_rank = 7; // Full House
         } else if is_flush {
             hand_rank = 6; // Flush

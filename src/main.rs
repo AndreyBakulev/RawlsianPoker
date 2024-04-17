@@ -8,22 +8,16 @@ use crate::table::Table;
 fn main() {
     let mut table = Table::new("Table 1");
     let mut p1 = Player::new("Andrey");
-    table.deck.shuffle();
+    table.start_game();
     //println!("Shuffled Deck:\n{}", table.deck);
     while p1.hand.len() < 5{
         p1.draw(&mut table.deck);
     }
-    println!("Player 1's Hand:\n{}",p1);
+    println!("{}'s Hand:\n{}",p1.id,p1);
     let hand_rank = p1.evaluate_hand();
     println!("Hand Rank:\n{:?}", hand_rank);
 }
 /*
-TODO:{
-add the table and deck drawing stuff
-add enums for winning poker hands
-}
-
-
 
 add a player class
 each player has an array of Traits
