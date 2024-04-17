@@ -1,9 +1,8 @@
 use std::collections::HashMap;
 use std::fmt;
-use crate::card::Card;
+use crate::card::{Card, Suit};
 use crate::deck::Deck;
 use crate::table::Table;
-
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum PokerHand {
     HighCard,
@@ -60,28 +59,27 @@ impl Player {
     }
 
     pub fn evaluate_hand(&self, community_cards: &Vec<Card>) -> PokerHand {
-        let mut hand_rank;
+        let hand_rank;
         let mut rank_counts = HashMap::new();
         let mut suit_counts = HashMap::new();
         let mut total_cards: Vec<Card> = self.hand.clone();
         total_cards.extend(community_cards.clone());
-        println!("{:?}",total_cards);
-        println!("{}", &self);
+        total_cards.sort();
         // Count the occurrences of each rank and suit
-        for card in total_cards {
+        for card in &total_cards {
             *rank_counts.entry(card.value).or_insert(0) += 1;
             *suit_counts.entry(card.suit).or_insert(0) += 1;
         }
 
         // Check for flush
-        let is_flush = suit_counts.len() == 1;
-
+        let is_flush = self.is_flush(&total_cards);
         // Check for straight
-        let is_straight = self.is_straight();
+        let is_straight = self.is_straight(&total_cards);
 
         // Calculate the hand rank based on the counts
         if is_flush && is_straight {
-            hand_rank = if self.hand.iter().map(|c| c.value).min().unwrap() == 1 {
+            //if there is an ace
+            hand_rank = if total_cards[0].value == 1 {
                 10 // Royal Flush
             } else {
                 9 // Straight Flush
@@ -119,18 +117,29 @@ impl Player {
         }
     }
 
-    fn is_straight(&self) -> bool {
-        let mut sorted_values: Vec<u8> = self.hand.iter().map(|c| c.value).collect();
-        sorted_values.sort();
-
+    //something in this method is wrong
+    fn is_straight(&self, total_cards: &Vec<Card>) -> bool {
         let mut count = 0;
-        for i in 1..sorted_values.len() {
-            if sorted_values[i] == sorted_values[i - 1] + 1 {
+        for i in 1.. total_cards.len(){
+            if total_cards[i].value == (total_cards[i-1].value + 1) {
                 count += 1;
             }
         }
-
-        count == 4 || (count == 3 && sorted_values[0] == 1 && sorted_values[4] == 13)
+        count == 4 || (count == 3 && total_cards[0].value == 1 && total_cards[4].value == 13)
+    }
+    fn is_flush(&self, total_cards: &Vec<Card>) -> bool{
+        for suit in [Suit::Hearts, Suit::Diamonds, Suit::Clubs, Suit::Spades] {
+            let mut count:i8  = 0;
+            for card in total_cards {
+                if card.suit == suit {
+                    count += 1;
+                }
+            }
+            if count >= 5 {
+                true;
+            }
+        }
+        false
     }
 }
 

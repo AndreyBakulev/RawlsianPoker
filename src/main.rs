@@ -19,8 +19,7 @@ fn main() {
 }
 /*
 TODO{
-    for normal poker, recheck the enums for winning cards (flush)
-    add the community cards to each players deck to check if they won
+    for normal poker, redo the enums for winning cards (make it efficient too)
 
     add trait system with money and stuff
     let user type in terminal to redraw / discard

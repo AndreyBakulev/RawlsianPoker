@@ -1,7 +1,7 @@
 use std::{cmp, fmt};
 use crate::card::Card;
 use crate::deck::Deck;
-use crate::player::Player;
+use crate::player::{Player, PokerHand};
 
 #[derive(Debug, PartialEq, PartialOrd, Eq, Ord, Hash)]
 pub struct Table {
@@ -29,10 +29,7 @@ impl Table {
         self.players.retain(|player| player.id != player_id);
     }
     pub fn play_round(&mut self) {
-        let
-        //TODO: decide whether broke players can stay at the table & iterate cus fast!
-        let viable_players = self.players.clone().iter().
-        for i in 0.. self.players.len() {
+        for i in 0 .. self.players.len() {
             if 0 >= self.players[i].balance {
                 println!("{} has no more money left!", self.players[i].id);
                 self.players.remove(i);
@@ -59,10 +56,17 @@ impl Table {
         self.community_card.push(self.deck.draw().unwrap());
         self.betting_round();
         // Showdown and determine the winner
-        // TODO: Implement showdown and winner determination
-
-        // Award the pot to the winner
-        // TODO: Implement awarding the pot to the winner
+        let mut poker_hands= Vec::new();
+        for player in &self.players {
+            poker_hands.push(player.evaluate_hand(&self.community_card));
+        }
+        poker_hands.sort();
+        println!("Final hands: {:?}",poker_hands);
+        println!("The Winner is _ with a {:?}\n{} has been put into you balance!",poker_hands[poker_hands.len()-1],self.pot);
+        __.balance += self.pot;
+        self.pot = 0;
+        //TODO: get the winner
+        //TODO: decide ties by checking for more things
     }
 
     fn betting_round(&mut self) {
