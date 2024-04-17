@@ -8,17 +8,20 @@ use crate::table::Table;
 
 fn main() {
     let mut table = Table::new("Table 1");
-    let mut p1 = Player::new("Andrey", 10000.0);
-    let mut p2 = Player::new("Bot 1", 5000.0);
-    let mut p3 = Player::new("Bot 2", 2000.0);
+    let mut p1 = Player::new("Andrey", 10000);
+    let mut p2 = Player::new("Bot 1", 5000);
+    let mut p3 = Player::new("Bot 2", 2000);
+    p1.join_table(&mut table);
+    p2.join_table(&mut table);
+    p3.join_table(&mut table);
     table.play_round();
     //println!("Shuffled Deck:\n{}", table.deck);
-    println!("{}'s Hand:\n{}",p1.id,p1);
-    let hand_rank = p1.evaluate_hand();
-    println!("Hand Rank:\n{:?}", hand_rank);
 }
 /*
 TODO{
+    for normal poker, recheck the enums for winning cards (flush)
+    add the community cards to each players deck to check if they won
+
     add trait system with money and stuff
     let user type in terminal to redraw / discard
     add multiple players and turns

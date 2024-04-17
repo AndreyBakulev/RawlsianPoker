@@ -18,16 +18,16 @@ pub enum PokerHand {
     RoyalFlush,
 }
 
-#[derive(Debug, PartialEq, PartialOrd, Ord, Hash)]
+#[derive(Debug, PartialEq, PartialOrd, Eq,Ord, Hash)]
 pub struct Player {
     pub(crate) hand: Vec<Card>,
     pub(crate) id: String,
-    pub(crate) balance: f64,
+    pub(crate) balance: i64,
     pub folded: bool,
 }
 
 impl Player {
-    pub fn new(id: &str, balance: f64) -> Self {
+    pub fn new(id: &str, balance: i64) -> Self {
         Player {
             hand: Vec::new(),
             id: id.to_string(),
@@ -35,7 +35,9 @@ impl Player {
             folded: false,
         }
     }
-
+    pub fn join_table(self,table: &mut Table){
+        table.add_player(self);
+    }
     pub fn draw(&mut self, deck: &mut Deck) -> Option<Card> {
         if let Some(card) = deck.draw() {
             self.hand.push(card);
@@ -44,9 +46,9 @@ impl Player {
             None
         }
     }
-    pub fn bet(&mut self, mut table: &mut Table, amount: f64){
-        if (self.balance - amount) > 0.0 {
-            table.pot += amount;
+    pub fn bet(&mut self, pot: &mut i64, amount: i64){
+        if self.balance >= amount {
+            *pot += amount;
             self.balance -= amount;
             println!("Successfully bet {}!", amount);
         } else {
@@ -132,6 +134,6 @@ impl Player {
 impl fmt::Display for Player {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let hand: Vec<String> = self.hand.iter().map(|card| card.to_string()).collect();
-        write!(f, "{}", hand.join("\n"))
+        write!(f, "{}", hand.join(", "))
     }
 }
