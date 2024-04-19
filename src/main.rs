@@ -23,6 +23,7 @@ TODO{
     let user type in terminal to redraw / discard
     add multiple players and turns
 
+    Add more games (blackjack, chess)
 }
 each player has an array of Traits
 each trait affects the total money
