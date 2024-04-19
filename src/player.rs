@@ -57,6 +57,9 @@ impl Player {
     pub fn fold(&mut self){
         self.folded = true;
     }
+    pub fn add_balance(&mut self, balance: i64){
+        self.balance += balance;
+    }
 
     pub fn evaluate_hand(&self, community_cards: &Vec<Card>) -> PokerHand {
         let hand_rank;

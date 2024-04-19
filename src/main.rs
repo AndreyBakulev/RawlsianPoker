@@ -15,11 +15,9 @@ fn main() {
     p2.join_table(&mut table);
     p3.join_table(&mut table);
     table.play_round();
-    //println!("Shuffled Deck:\n{}", table.deck);
 }
 /*
 TODO{
-    for normal poker, redo the enums for winning cards (make it efficient too)
 
     add trait system with money and stuff
     let user type in terminal to redraw / discard

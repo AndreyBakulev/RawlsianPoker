@@ -1,7 +1,7 @@
 use std::{cmp, fmt};
 use crate::card::Card;
 use crate::deck::Deck;
-use crate::player::{Player, PokerHand};
+use crate::player::{Player};
 
 #[derive(Debug, PartialEq, PartialOrd, Eq, Ord, Hash)]
 pub struct Table {
@@ -29,7 +29,7 @@ impl Table {
         self.players.retain(|player| player.id != player_id);
     }
     pub fn play_round(&mut self) {
-        for i in 0 .. self.players.len() {
+        for i in 0..self.players.len() {
             if 0 >= self.players[i].balance {
                 println!("{} has no more money left!", self.players[i].id);
                 self.players.remove(i);
@@ -56,17 +56,30 @@ impl Table {
         self.community_card.push(self.deck.draw().unwrap());
         self.betting_round();
         // Showdown and determine the winner
-        let mut poker_hands= Vec::new();
+        let mut poker_hands = Vec::new();
         for player in &self.players {
             poker_hands.push(player.evaluate_hand(&self.community_card));
         }
         poker_hands.sort();
-        println!("Final hands: {:?}",poker_hands);
-        println!("The Winner is _ with a {:?}\n{} has been put into you balance!",poker_hands[poker_hands.len()-1],self.pot);
-        __.balance += self.pot;
+        let winning_hand = poker_hands.last().unwrap();
+        let mut winners = self.players.iter().filter(|p| p.evaluate_hand(&self.community_card) == *winning_hand).collect::<Vec<_>>();
+        if winners.len() > 1 {
+            println!("Multiple winners, going to high card!\n");
+            for _ in 0..winners.len() - 1 {
+                if winners[0].hand.last().unwrap().value > winners[1].hand.last().unwrap().value {
+                    winners.remove(1);
+                } else {
+                    winners.remove(0);
+                }
+            }
+        }
+        println!("The winner is {} with a {:?}", winners[0].id, winning_hand);
+        println!("{} has been added to {}'s balance!", self.pot, winners[0].id, );
+        if let Some(winner_index) = self.players.iter().position(|p| p.id == winners[0].id) {
+            self.players[winner_index].balance += self.pot;
+            println!("{}'s balance is now {}!", self.players[winner_index].id, self.players[winner_index].balance);
+        }
         self.pot = 0;
-        //TODO: get the winner
-        //TODO: decide ties by checking for more things
     }
 
     fn betting_round(&mut self) {
@@ -125,6 +138,7 @@ impl Table {
                     println!("Invalid action. Please enter a valid action.");
                 }
             }
+            &player.hand.sort();
         }
     }
 }
