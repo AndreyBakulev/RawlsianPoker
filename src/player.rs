@@ -56,6 +56,7 @@ impl Player {
     }
     pub fn fold(&mut self){
         self.folded = true;
+        self.hand.clear();
     }
     pub fn add_balance(&mut self, balance: i64){
         self.balance += balance;
@@ -128,7 +129,7 @@ impl Player {
                 count += 1;
             }
         }
-        count == 4 || (count == 3 && total_cards[0].value == 1 && total_cards[4].value == 13)
+        count == 4 || (count == 3 && total_cards[0].value == 1 && total_cards[6].value == 13)
     }
     fn is_flush(&self, total_cards: &Vec<Card>) -> bool{
         for suit in [Suit::Hearts, Suit::Diamonds, Suit::Clubs, Suit::Spades] {
@@ -140,6 +141,10 @@ impl Player {
             }
             if count >= 5 {
                 true;
+            }
+            if count == 3 {
+                //if u have 3 of one kind u cant get a flush with any other
+                false;
             }
         }
         false

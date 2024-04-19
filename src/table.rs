@@ -74,7 +74,7 @@ impl Table {
             }
         }
         println!("The winner is {} with a {:?}", winners[0].id, winning_hand);
-        println!("{} has been added to {}'s balance!", self.pot, winners[0].id, );
+        println!("{} has been added to {}'s balance!", self.pot, winners[0].id);
         if let Some(winner_index) = self.players.iter().position(|p| p.id == winners[0].id) {
             self.players[winner_index].balance += self.pot;
             println!("{}'s balance is now {}!", self.players[winner_index].id, self.players[winner_index].balance);
@@ -131,8 +131,6 @@ impl Table {
                 }
                 "fold" => {
                     player.fold();
-                    current_players.remove(i);
-                    break;
                 }
                 _ => {
                     println!("Invalid action. Please enter a valid action.");
