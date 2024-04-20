@@ -3,7 +3,7 @@ use crate::card::Card;
 use crate::deck::Deck;
 use crate::player::{Player};
 
-#[derive(Debug, PartialEq, PartialOrd, Eq, Ord, Hash)]
+#[derive(Debug, PartialEq, PartialOrd, Eq, Ord, Hash, Clone)]
 pub struct Table {
     pub table_id: String,
     pub(crate) deck: Deck,
@@ -144,6 +144,22 @@ impl Table {
 impl fmt::Display for Table {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let community_cards: Vec<String> = self.community_card.iter().map(|card| card.to_string()).collect();
-        write!(f, "{}", community_cards.join(", "))
+
+        let mut output = String::new();
+        output.push_str("Community Cards:\n");
+
+        for (i, card) in community_cards.iter().enumerate() {
+            output.push_str(&format!("{}", card));
+
+            if i < community_cards.len() - 1 {
+                output.push_str(", ");
+            }
+
+            if (i + 1) % 3 == 0 {
+                output.push_str("\n");
+            }
+        }
+
+        write!(f, "{}", output.trim())
     }
 }

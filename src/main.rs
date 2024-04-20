@@ -8,12 +8,10 @@ use crate::table::Table;
 
 fn main() {
     let mut table = Table::new("Table 1");
-    let mut p1 = Player::new("Andrey", 10000);
-    let mut p2 = Player::new("Bot 1", 5000);
-    let mut p3 = Player::new("Bot 2", 2000);
+    let p1 = Player::new("Andrey", 10000);
+    let p2 = Player::new("Irina",10000);
     p1.join_table(&mut table);
     p2.join_table(&mut table);
-    p3.join_table(&mut table);
     table.play_round();
 }
 /*

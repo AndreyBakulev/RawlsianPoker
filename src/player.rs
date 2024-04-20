@@ -3,7 +3,7 @@ use std::fmt;
 use crate::card::{Card, Suit};
 use crate::deck::Deck;
 use crate::table::Table;
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Clone)]
 pub enum PokerHand {
     HighCard,
     OnePair,
@@ -17,7 +17,7 @@ pub enum PokerHand {
     RoyalFlush,
 }
 
-#[derive(Debug, PartialEq, PartialOrd, Eq,Ord, Hash)]
+#[derive(Debug, PartialEq, PartialOrd, Eq,Ord, Hash, Clone)]
 pub struct Player {
     pub(crate) hand: Vec<Card>,
     pub(crate) id: String,
@@ -58,10 +58,6 @@ impl Player {
         self.folded = true;
         self.hand.clear();
     }
-    pub fn add_balance(&mut self, balance: i64){
-        self.balance += balance;
-    }
-
     pub fn evaluate_hand(&self, community_cards: &Vec<Card>) -> PokerHand {
         let hand_rank;
         let mut rank_counts = HashMap::new();

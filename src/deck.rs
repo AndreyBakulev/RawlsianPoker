@@ -3,7 +3,7 @@ use rand::seq::SliceRandom;
 use rand::thread_rng;
 use crate::card::{Card, Suit};
 
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Hash, Clone)]
 pub struct Deck {
     pub card_array: Vec<Card>,
 }
