@@ -15,6 +15,21 @@ fn main() {
     table.play_round();
 }
 /*
+
+FOR NORMAL POKER:
+you have to add a pre-flop round and add a button(dealer), small blind + big blind
+big blind bets x value, and small blind bets .5 of big blind
+then each player can call, raise, or fold (min raise is 2x big blind)
+then flop
+POST FLOP:
+each user can either check (bet 0 but continue), fold, or bet
+AFTER BET, each user has to call raise or fold.
+then turn
+then once again check or bet
+then river
+then once again check or bet
+then show
+
 TODO{
 
     add trait system with money and stuff
