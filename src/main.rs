@@ -10,6 +10,9 @@ fn main() {
     let mut table = Table::new("Table 1");
     let p1 = Player::new("Andrey", 10000);
     let p2 = Player::new("Irina",10000);
+    let p3 = Player::new("Bot 3",10000);
+    let p4 = Player::new("Bot 4",10000);
+    let p5 = Player::new("Bot 5",10000);
     p1.join_table(&mut table);
     p2.join_table(&mut table);
     table.play_round();

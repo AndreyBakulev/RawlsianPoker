@@ -49,7 +49,7 @@ impl Player {
         if self.balance >= amount {
             *pot += amount;
             self.balance -= amount;
-            println!("Successfully bet {}!", amount);
+            println!("{} successfully bet {}!",&self.id, amount);
         } else {
             println!("Not enough balance to bet!");
         }
