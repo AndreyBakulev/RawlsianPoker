@@ -1,7 +1,7 @@
 use std::{cmp, fmt, io};
 use crate::card::Card;
 use crate::deck::Deck;
-use crate::player::Player;
+use crate::player::{Player, PokerHand};
 
 #[derive(Debug, PartialEq, PartialOrd, Eq, Ord, Hash, Clone)]
 pub struct Table {
@@ -60,14 +60,13 @@ impl Table {
         // Determine the small blind and big blind positions
         let small_blind_index = self.wrapped_index(self.button + 1);
         let big_blind_index = self.wrapped_index(self.button + 2);
-
         // Reset folded state for all players
         for player in &mut self.players {
             player.folded = false;
             player.hand.clear();
         }
         self.deck.shuffle();
-        println!("Small blind is: {} and big blind is {}", &self.players[small_blind_index].id, &self.players[big_blind_index].id);
+        println!("Button: {}\nSmall blind: {}\nBig blind: {}",&self.players[small_blind_index-1].id,&self.players[small_blind_index].id, &self.players[big_blind_index].id);
         println!("Min bet this round is: {}", self.min_bet);
         &self.players[small_blind_index].bet(&mut self.pot, self.min_bet / 2);
         &self.players[big_blind_index].bet(&mut self.pot, self.min_bet);
@@ -85,21 +84,21 @@ impl Table {
         for _ in 0..3 {
             self.community_cards.push(self.deck.draw().unwrap());
         }
-        println!("Flop: {:?}", &self.community_cards);
+        println!("Flop: {}", &self);
         self.betting_round();
 
         // Turn
         self.community_cards.push(self.deck.draw().unwrap());
-        println!("Turn: {:?}", &self.community_cards);
+        println!("Turn: {}", &self);
         self.betting_round();
 
         // River
         self.community_cards.push(self.deck.draw().unwrap());
-        println!("River: {:?}", &self.community_cards);
+        println!("River: {}", &self);
         self.betting_round();
 
         // Showdown and determine the winner
-        let mut poker_hands: Vec<(usize, HandRank)> = self.players
+        let mut poker_hands: Vec<(usize, PokerHand)> = self.players
             .iter()
             .enumerate()
             .filter(|(_, player)| !player.folded)
@@ -108,13 +107,13 @@ impl Table {
 
         poker_hands.sort_by(|(_, a), (_, b)| b.cmp(a));
 
-        let (winner_index, winning_hand) = poker_hands[0];
-        println!("The winner is {} with a {:?}", self.players[winner_index].id, winning_hand);
+        let (winner_index, winning_hand) = &poker_hands[0];
+        println!("The winner is {} with a {:?}", self.players[*winner_index].id, winning_hand);
 
         // Award the pot to the winner
-        self.players[winner_index].balance += self.pot;
-        println!("{} has been added to {}'s balance!", self.pot, self.players[winner_index].id);
-        println!("{}'s balance is now {}!", self.players[winner_index].id, self.players[winner_index].balance);
+        self.players[*winner_index].balance += self.pot;
+        println!("{} has been added to {}'s balance!", self.pot, self.players[*winner_index].id);
+        println!("{}'s balance is now {}!", self.players[*winner_index].id, self.players[*winner_index].balance);
 
         self.pot = 0;
         self.min_bet *= 2;
@@ -137,9 +136,14 @@ impl Table {
                     current_player_index = self.wrapped_index((current_player_index + 1) as i16);
                     continue;
                 }
-                println!("\nCommunity Cards: {:?}\nPot: {}\n{}'s turn:\nBalance: {}\nHand: {}",
-                         self.community_cards, self.pot, player.id, player.balance, player);
+                println!("\nCommunity Cards: {:?}\nPot: {}\n{}'s turn:\nBalance: {}\nHand: {} ({:?})",
+                         self.community_cards, self.pot, player.id, player.balance, player,player.evaluate_hand(&self.community_cards));
+            if &self.community_cards.len() <= &0 {
                 println!("Enter your action (call, raise, fold):");
+            } else {
+                println!("Enter your action (check, raise)")
+            }
+
                 let mut action = String::new();
                 io::stdin().read_line(&mut action).expect("Failed to read line");
                 let action = action.trim();
@@ -180,6 +184,7 @@ impl Table {
             }
             // Check if the betting round is complete
             if current_player_index == self.wrapped_index(self.button + 3) {
+                println!("Everyone made a turn, going to next round!");
                 break;
             }
         }
@@ -194,7 +199,7 @@ impl fmt::Display for Table {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let community_cards: Vec<String> = self.community_cards.iter().map(|card| card.to_string()).collect();
         let mut output = String::new();
-        output.push_str("Community Cards:\n");
+        output.push_str("\n");
 
         for (i, card) in community_cards.iter().enumerate() {
             output.push_str(&format!("{}", card));
