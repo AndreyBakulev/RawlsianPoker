@@ -109,7 +109,6 @@ impl Table {
 
         let (winner_index, winning_hand) = &poker_hands[0];
         println!("The winner is {} with a {:?}", self.players[*winner_index].id, winning_hand);
-
         // Award the pot to the winner
         self.players[*winner_index].balance += self.pot;
         println!("{} has been added to {}'s balance!", self.pot, self.players[*winner_index].id);
@@ -126,11 +125,10 @@ impl Table {
     fn betting_round(&mut self) {
         let mut last_raise = 0;
         let mut current_player_index = self.wrapped_index(self.button + 3);
-
+        if &self.community_cards.len() <= &0 {
+            last_raise = self.min_bet;
+        }
         loop {
-            if &self.community_cards.len() <= &0 {
-                last_raise = self.min_bet;
-            }
                 let player = &mut self.players[current_player_index];
                 if player.folded {
                     current_player_index = self.wrapped_index((current_player_index + 1) as i16);
@@ -143,7 +141,6 @@ impl Table {
             } else {
                 println!("Enter your action (check, raise)")
             }
-
                 let mut action = String::new();
                 io::stdin().read_line(&mut action).expect("Failed to read line");
                 let action = action.trim();
